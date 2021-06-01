@@ -64,4 +64,38 @@ const getNoteByIDHandler = (request, h) => {
   return response;
 };
 
-module.exports = { addNoteHandler, getAllNotesHandler, getNoteByIDHandler };
+const editNoteByIDHandler = (request, h) => {
+  const { id } = request.params;
+  const { title, tags, body } = request.payload;
+  const updatedAt = new Date().toISOString();
+
+  const index = notes.findIndex((n) => n.id === id);
+
+  if (index !== -1) {
+    notes[index] = {
+      ...notes[index],
+      title,
+      tags,
+      body,
+      updatedAt,
+    };
+
+    const response = h.response({
+      status: 'success',
+      message: 'Catatan berhasil diubah',
+    });
+    response.code(200);
+    return response;
+  }
+
+  const response = h.response({
+    status: 'fail',
+    message: 'Gagal mengubah catatan. ID tidak ditemukan',
+  });
+  response.code(400);
+  return response;
+};
+
+module.exports = {
+  addNoteHandler, getAllNotesHandler, getNoteByIDHandler, editNoteByIDHandler,
+};
